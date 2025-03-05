@@ -1,0 +1,51 @@
+Problem: 175. Combine Two Tables
+Goal: Write a SQL query that provides the following information for each person in the Person table,
+      regardless of whether they have an address in the Address table:
+      - FirstName
+      - LastName
+      - City
+      - State
+
+Tables:
+1. Person
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| PersonId    | int     |
+| FirstName   | varchar |
+| LastName    | varchar |
++-------------+---------+
+PersonId is the primary key column for this table.
+
+2. Address
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| AddressId   | int     |
+| PersonId    | int     |
+| City        | varchar |
+| State       | varchar |
++-------------+---------+
+AddressId is the primary key column for this table.
+
+Approach:
+Use a LEFT JOIN to combine the two tables.
+This ensures that we retrieve all persons from the Person table,
+including those who do not have a corresponding address in the Address table.
+If there is no address for a person, the City and State will be NULL.
+
+SQL Query:
+SELECT 
+    p.FirstName,      -- Person's first name
+    p.LastName,       -- Person's last name
+    a.City,           -- Associated city from the Address table, or NULL if no address
+    a.State           -- Associated state from the Address table, or NULL if no address
+FROM 
+    Person p          -- Start from the Person table
+LEFT JOIN 
+    Address a         -- Perform a LEFT JOIN with the Address table
+    ON p.PersonId = a.PersonId;  -- Match rows based on PersonId
+
+Explanation:
+The LEFT JOIN ensures that even if a person does not have an address, 
+they will still appear in the results, with NULL values for the City and State.
