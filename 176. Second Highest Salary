@@ -1,0 +1,87 @@
+176. Second Highest Salary
+Medium
+
+Table: Employee
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| id          | int  |
+| salary      | int  |
++-------------+------+
+id is the primary key (column with unique values) for this table.
+Each row of this table contains information about the salary of an employee.
+ 
+Write a solution to find the second highest distinct salary from the Employee table. If there is no second highest salary, return null (return None in Pandas).
+
+The result format is in the following example.
+Example 1:
+Input: 
+Employee table:
++----+--------+
+| id | salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+Output: 
++---------------------+
+| SecondHighestSalary |
++---------------------+
+| 200                 |
++---------------------+
+
+Example 2:
+Input: 
+Employee table:
++----+--------+
+| id | salary |
++----+--------+
+| 1  | 100    |
++----+--------+
+Output: 
++---------------------+
+| SecondHighestSalary |
++---------------------+
+| null                |
++---------------------+
+
+
+Solution 1] Using Sub-Query:
+SELECT MAX(salary) AS SecondHighestSalary
+FROM Employee
+WHERE salary < (SELECT MAX(salary) FROM Employee);
+
+Solution 2] Using Joins:
+SELECT max(a.salary) as SecondHighestSalary
+FROM employee AS a JOIN employee AS b
+ON a.salary < b.salary
+
+Solution 3] Using DENSE_RANK Function :
+SELECT IFNULL(
+    (SELECT DISTINCT salary
+     FROM (
+         SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+         FROM Employee
+     ) t
+     WHERE t.rnk = 2), NULL) AS SecondHighestSalary;
+
+Solution 4] Using Sub-Query:
+# Write your MySQL query statement below
+select max(salary) as SecondHighestSalary 
+from Employee 
+where salary not in 
+  (
+    select max(salary) from Employee
+  )
+
+Solution 5] Using CTE:
+WITH cte AS (
+    SELECT 
+        DENSE_RANK() OVER (ORDER BY Salary DESC) AS r,
+        salary
+    FROM Employee
+)
+SELECT 
+    MAX(CASE WHEN r = 2 THEN salary ELSE NULL END) AS SecondHighestSalary
+FROM cte;
